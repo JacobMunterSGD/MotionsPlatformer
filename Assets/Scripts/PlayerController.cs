@@ -11,6 +11,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundCheckDistance;
     [SerializeField] private LayerMask jumpLayerMask;
 
+    [SerializeField] float apexHeight;
+    [SerializeField] float apexTime;
+
+    [SerializeField] float jumpVelocity;
+
+    [SerializeField] float terminalFallingSpeed;
+
     FacingDirection lastDirectionFaced;
 
     public enum FacingDirection
@@ -21,9 +28,10 @@ public class PlayerController : MonoBehaviour
     void OnValidate()
     {
         rb = GetComponent<Rigidbody2D>();
+        float gravity = -2f * apexHeight / (apexTime * apexTime);
+        Physics2D.gravity = new Vector2(0, gravity);
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         // The input from the player needs to be determined and
@@ -36,12 +44,35 @@ public class PlayerController : MonoBehaviour
 
         MovementUpdate(playerInput);
 
-        //bool temp = IsGrounded();
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+        }
         
+        jumpVelocity = 2 * apexHeight / apexTime;
+
+
+        TerminalFallingVelocityCheck();
+
+    }
+
+    void Jump()
+    {
+        if (!IsGrounded()) return;
+        rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+    }
+
+    void TerminalFallingVelocityCheck()
+    {
+        if (rb.velocity.y + Physics2D.gravity.y * Time.deltaTime < terminalFallingSpeed)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, terminalFallingSpeed);
+        }
+
     }
 
     private void MovementUpdate(Vector2 playerInput)
@@ -49,11 +80,11 @@ public class PlayerController : MonoBehaviour
 
         if (maxSpeed < Mathf.Abs(rb.velocity.x + ((playerInput.x * force) / rb.mass) * Time.deltaTime))
         {
-            rb.velocity = new Vector2(maxSpeed * playerInput.x, 0);
+            rb.velocity = new Vector2(maxSpeed * playerInput.x, rb.velocity.y);
         }
         else
         {
-            rb.AddForce(new Vector2(playerInput.x * force * Time.deltaTime, 0), ForceMode2D.Impulse);
+            rb.velocity = new Vector2(rb.velocity.x + playerInput.x * force * Time.deltaTime, rb.velocity.y);
         }
     }
 

@@ -978,46 +978,6 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: -20, y: -6, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 8
-      m_TileSpriteIndex: 8
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: -19, y: -6, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 8
-      m_TileSpriteIndex: 8
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: -18, y: -6, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 8
-      m_TileSpriteIndex: 8
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: -17, y: -6, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 8
-      m_TileSpriteIndex: 8
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   - first: {x: -16, y: -6, z: 0}
     second:
       serializedVersion: 2
@@ -1416,8 +1376,8 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 25879a22a7c39b84bbdffe6df8ec3d80, type: 2}
   - m_RefCount: 3
     m_Data: {fileID: 11400000, guid: 527c56df4c8c88543bbd749216176b1c, type: 2}
-  - m_RefCount: 4
-    m_Data: {fileID: 11400000, guid: b5c066440c090984f9b0f6a21a424251, type: 2}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   m_TileSpriteArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
@@ -1435,10 +1395,10 @@ Tilemap:
     m_Data: {fileID: 985218809, guid: e445ff80d05afac4082440f52845ad7a, type: 3}
   - m_RefCount: 3
     m_Data: {fileID: 81161395, guid: e445ff80d05afac4082440f52845ad7a, type: 3}
-  - m_RefCount: 4
-    m_Data: {fileID: 753646330, guid: e445ff80d05afac4082440f52845ad7a, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   m_TileMatrixArray:
-  - m_RefCount: 97
+  - m_RefCount: 93
     m_Data:
       e00: 1
       e01: 0
@@ -1475,7 +1435,7 @@ Tilemap:
       e32: 9.8e-44
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 97
+  - m_RefCount: 93
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -1554,6 +1514,14 @@ CompositeCollider2D:
         Y: -15053127
       - X: -60000000
         Y: -37084376
+      - X: -120000000
+        Y: -37084376
+      - X: -120000000
+        Y: -52084380
+      - X: -150000000
+        Y: -52084380
+      - X: -150000000
+        Y: -37084376
       - X: -225000000
         Y: -37084376
       - X: -225000000
@@ -1572,14 +1540,6 @@ CompositeCollider2D:
         Y: 14946873
       - X: -90000000
         Y: 14946873
-    - - X: -150000000
-        Y: -52084380
-      - X: -150000000
-        Y: -45053128
-      - X: -120000000
-        Y: -45053128
-      - X: -120000000
-        Y: -52084380
   m_CompositePaths:
     m_Paths:
     - - {x: -5.250029, y: -6.005313}
@@ -1590,6 +1550,10 @@ CompositeCollider2D:
       - {x: -8.99997, y: -1.5053127}
       - {x: -6, y: -1.5053421}
       - {x: -6.0000296, y: -3.7084377}
+      - {x: -12, y: -3.7084668}
+      - {x: -12.00003, y: -5.208438}
+      - {x: -15, y: -5.208409}
+      - {x: -15.000029, y: -3.7084377}
       - {x: -22.5, y: -3.708408}
       - {x: -22.500029, y: 4.541562}
       - {x: -23.25, y: 4.541533}
@@ -1598,10 +1562,6 @@ CompositeCollider2D:
       - {x: -9.00003, y: 2.2915623}
       - {x: -11.25, y: 2.2915332}
       - {x: -11.24997, y: 1.4946873}
-    - - {x: -12, y: -5.208409}
-      - {x: -15, y: -5.208409}
-      - {x: -14.999971, y: -4.505313}
-      - {x: -12, y: -4.5053425}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -1734,12 +1694,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1433354318}
-  force: 15
+  force: 20
   maxSpeed: 5
   groundCheckDistance: 0.6
   jumpLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  apexHeight: 3.5
+  apexTime: 0.5
+  jumpVelocity: 0
+  terminalFallingSpeed: -5
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
