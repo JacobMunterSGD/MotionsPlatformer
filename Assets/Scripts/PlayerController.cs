@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float terminalFallingSpeed;
 
     float coyoteTimer;
+    bool canJump;
     [SerializeField] float coyoteTimerStartValue;
 
     FacingDirection lastDirectionFaced;
@@ -62,12 +63,23 @@ public class PlayerController : MonoBehaviour
 
         TerminalFallingVelocityCheck();
 
+        print("can jump: " + canJump);
+        //print((coyoteTimer < coyoteTimerStartValue && coyoteTimer > 0));
+
     }
 
     void Jump()
     {
-        if (!IsGrounded()) return;
-        rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+        if (!canJump) return;
+
+        if (IsGrounded() || (coyoteTimer < coyoteTimerStartValue && coyoteTimer > 0))
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+            canJump = false;
+        }
+        //if (coyoteTimer < coyoteTimerStartValue && coyoteTimer > 0) isJumping = true;
+
+        //coyoteTimer = coyoteTimerStartValue;
     }
 
     void TerminalFallingVelocityCheck()
@@ -76,7 +88,6 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, terminalFallingSpeed);
         }
-
     }
 
     private void MovementUpdate(Vector2 playerInput)
@@ -91,13 +102,17 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x + playerInput.x * force * Time.deltaTime, rb.velocity.y);
         }
 
-        if (rb.velocity.x > 0 && IsGrounded())
+        if (rb.velocity.x > 0.1 && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x - groundFriction * Time.deltaTime, rb.velocity.y);
         }
-        if (rb.velocity.x < 0 && IsGrounded())
+        if (rb.velocity.x < -0.1 && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x + groundFriction * Time.deltaTime, rb.velocity.y);
+        }
+        if (-0.1 < rb.velocity.x && rb.velocity.x < 0.1)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
         }
 
     }
@@ -118,15 +133,28 @@ public class PlayerController : MonoBehaviour
         {
             Debug.DrawLine(transform.position, hitInfoBoxCast.point, Color.green);
             rb.gravityScale = 0;
-            coyoteTimer
+            coyoteTimer = coyoteTimerStartValue;
+            canJump = true;
         }
         else
         {
             rb.gravityScale = 1;
-            coyoteTimer -= Time.deltaTime;
-        }
+            if (canJump == true)
+            {
+                if (coyoteTimer >= 0)
+                {
+                    coyoteTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    canJump = false;
+                }
+            }
 
+        }
+        
         return hitInfoBoxCast.collider != null;
+        
     }
 
     public FacingDirection GetFacingDirection()
