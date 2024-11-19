@@ -103,6 +103,11 @@ public class PlayerController : MonoBehaviour
         if (hitInfoBoxCast.collider != null)
         {
             Debug.DrawLine(transform.position, hitInfoBoxCast.point, Color.green);
+            rb.gravityScale = 0;
+        }
+        else
+        {
+            rb.gravityScale = 1;
         }
 
         return hitInfoBoxCast.collider != null;
