@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float force;
     [SerializeField] float maxSpeed;
+    [SerializeField] float groundFriction;
 
     [SerializeField] float groundCheckDistance;
     [SerializeField] private LayerMask jumpLayerMask;
@@ -17,6 +18,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpVelocity;
 
     [SerializeField] float terminalFallingSpeed;
+
+    float coyoteTimer;
+    [SerializeField] float coyoteTimerStartValue;
 
     FacingDirection lastDirectionFaced;
 
@@ -86,6 +90,16 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x + playerInput.x * force * Time.deltaTime, rb.velocity.y);
         }
+
+        if (rb.velocity.x > 0 && IsGrounded())
+        {
+            rb.velocity = new Vector2(rb.velocity.x - groundFriction * Time.deltaTime, rb.velocity.y);
+        }
+        if (rb.velocity.x < 0 && IsGrounded())
+        {
+            rb.velocity = new Vector2(rb.velocity.x + groundFriction * Time.deltaTime, rb.velocity.y);
+        }
+
     }
 
     public bool IsWalking()
@@ -104,10 +118,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.DrawLine(transform.position, hitInfoBoxCast.point, Color.green);
             rb.gravityScale = 0;
+            coyoteTimer
         }
         else
         {
             rb.gravityScale = 1;
+            coyoteTimer -= Time.deltaTime;
         }
 
         return hitInfoBoxCast.collider != null;
