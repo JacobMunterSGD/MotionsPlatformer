@@ -1703,9 +1703,9 @@ MonoBehaviour:
     m_Bits: 8
   apexHeight: 3.5
   apexTime: 0.5
-  jumpVelocity: 0
+  jumpVelocity: 14
   terminalFallingSpeed: -6
-  coyoteTimerStartValue: 1
+  coyoteTimerStartValue: 0.3
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
