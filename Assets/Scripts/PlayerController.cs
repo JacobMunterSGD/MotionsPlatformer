@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour
     bool canJump;
     [SerializeField] float coyoteTimerStartValue;
 
+    float gameTimer;
+    float lastJumped;
+
     FacingDirection lastDirectionFaced;
 
     public enum FacingDirection
@@ -35,20 +38,18 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         float gravity = -2f * apexHeight / (apexTime * apexTime);
         Physics2D.gravity = new Vector2(0, gravity);
+        jumpVelocity = 2 * apexHeight / apexTime;
+
+        gameTimer = 0;
     }
 
     void FixedUpdate()
     {
-        // The input from the player needs to be determined and
-        // then passed in the to the MovementUpdate which should
-        // manage the actual movement of the character.
-
         Vector2 playerInput = new Vector2();
 
         playerInput.x = Input.GetAxisRaw("Horizontal");
 
         MovementUpdate(playerInput);
-
     }
 
     private void Update()
@@ -57,29 +58,51 @@ public class PlayerController : MonoBehaviour
         {
             Jump();
         }
-        
-        jumpVelocity = 2 * apexHeight / apexTime;
-
 
         TerminalFallingVelocityCheck();
+        CoyoteTimerUpdate();
 
-        print("can jump: " + canJump);
-        //print((coyoteTimer < coyoteTimerStartValue && coyoteTimer > 0));
+        gameTimer += Time.deltaTime;
 
+    }
+
+    void CoyoteTimerUpdate()
+    {
+        if (!IsGrounded())
+        {
+            if (coyoteTimer >= 0)
+            {
+                coyoteTimer -= Time.deltaTime;
+            }
+        }
+        if (IsGrounded())
+        {
+            coyoteTimer = coyoteTimerStartValue;
+        }
     }
 
     void Jump()
     {
-        if (!canJump) return;
+        bool jumpAvailable = false;
 
-        if (IsGrounded() || (coyoteTimer < coyoteTimerStartValue && coyoteTimer > 0))
+        if (IsGrounded())
+        {
+            jumpAvailable = true;
+        }
+        else
+        {
+            if (coyoteTimer > 0 && gameTimer - lastJumped > coyoteTimerStartValue)
+            {
+                jumpAvailable = true;
+            }
+        }
+
+        if (jumpAvailable)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-            canJump = false;
+            coyoteTimer = 0;
+            lastJumped = gameTimer;
         }
-        //if (coyoteTimer < coyoteTimerStartValue && coyoteTimer > 0) isJumping = true;
-
-        //coyoteTimer = coyoteTimerStartValue;
     }
 
     void TerminalFallingVelocityCheck()
@@ -115,6 +138,16 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
 
+        if (IsGrounded())
+        {
+            rb.gravityScale = 0;
+            
+        }
+        else
+        {
+            rb.gravityScale = 1;
+        }
+
     }
 
     public bool IsWalking()
@@ -132,24 +165,13 @@ public class PlayerController : MonoBehaviour
         if (hitInfoBoxCast.collider != null)
         {
             Debug.DrawLine(transform.position, hitInfoBoxCast.point, Color.green);
-            rb.gravityScale = 0;
-            coyoteTimer = coyoteTimerStartValue;
-            canJump = true;
+            
+            
         }
         else
         {
-            rb.gravityScale = 1;
-            if (canJump == true)
-            {
-                if (coyoteTimer >= 0)
-                {
-                    coyoteTimer -= Time.deltaTime;
-                }
-                else
-                {
-                    canJump = false;
-                }
-            }
+            
+            
 
         }
         
