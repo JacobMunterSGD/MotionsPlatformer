@@ -6,13 +6,15 @@ public class PlayerVisuals : MonoBehaviour
     public SpriteRenderer bodyRenderer;
     public PlayerController playerController;
 
-    private readonly int isWalkingHash = Animator.StringToHash("IsWalking");
-    private readonly int isGroundedHash = Animator.StringToHash("IsGrounded");
+    private readonly int walkingHash = Animator.StringToHash("IsWalking");
+    private readonly int idleHash = Animator.StringToHash("Idle");
+    private readonly int jumpingHash = Animator.StringToHash("Jumping");
+    private readonly int deadHash = Animator.StringToHash("Dead");
+
 
     void Update()
     {
-        animator.SetBool(isWalkingHash, playerController.IsWalking());
-        animator.SetBool(isGroundedHash, playerController.IsGrounded());
+        UpdateVisuals();
 
         switch (playerController.GetFacingDirection())
         {
@@ -22,6 +24,28 @@ public class PlayerVisuals : MonoBehaviour
             case PlayerController.FacingDirection.right:
                 bodyRenderer.flipX = false;
                 break;
+        }
+    }
+
+    private void UpdateVisuals()
+    {
+        if (playerController.previousState != playerController.currentState)
+        {
+            switch (playerController.currentState)
+            {
+                case PlayerState.idle:
+                    animator.CrossFade(idleHash, 0);
+                    break;
+                case PlayerState.walking:
+                    animator.CrossFade(walkingHash, 0);
+                    break;
+                case PlayerState.jumping:
+                    animator.CrossFade(jumpingHash, 0);
+                    break;
+                case PlayerState.dead:
+                    animator.CrossFade(deadHash, 0);
+                    break;
+            }
         }
     }
 }
