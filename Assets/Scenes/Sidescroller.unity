@@ -1715,6 +1715,7 @@ MonoBehaviour:
   grapplePullMultiplier: 0.6
   wallCheckDistance: 0.8
   climbSpeed: 5
+  bombPrefab: {fileID: 983623843420808369, guid: e7bae23c182819e4bae4fb060cf1ac6f, type: 3}
   isDead: 0
 --- !u!4 &1433354315
 Transform:

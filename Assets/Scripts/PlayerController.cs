@@ -48,8 +48,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Grapple")]
 
-    public float grappleLaunchSpeed;
-    public float grapplePullMultiplier;
+    [SerializeField] float grappleLaunchSpeed;
+    [SerializeField] float grapplePullMultiplier;
 
     float currentGrappleLength;
     float grappleDirection;
@@ -61,17 +61,21 @@ public class PlayerController : MonoBehaviour
 
     [Header("Climbing")]
 
-    public float wallCheckDistance;
+    [SerializeField] float wallCheckDistance;
 
     bool isClimbing;
 
-    public float climbSpeed;
+    [SerializeField] float climbSpeed;
+
+    [Header("Bomb")]
+
+    [SerializeField] GameObject bombPrefab;
 
     FacingDirection lastDirectionFaced;
 
     Vector2 velocity;
 
-    public bool isDead;
+    [SerializeField] bool isDead;
 
     public enum FacingDirection
     {
@@ -121,7 +125,9 @@ public class PlayerController : MonoBehaviour
         }
         Climbing();
 
-        CoyoteTimerUpdate();
+        if (Input.GetKeyDown("x") && !isDead) SpawnBomb();
+
+            CoyoteTimerUpdate();
         gameTimer += Time.deltaTime;
 
         void AnimationStateMachine()
@@ -376,7 +382,15 @@ public class PlayerController : MonoBehaviour
         return hitInfoLineCast;
 
     }
-    
+
+    void SpawnBomb()
+    {
+        if (lastDirectionFaced == FacingDirection.right) grappleDirection = 1;
+        if (lastDirectionFaced == FacingDirection.left) grappleDirection = -1;
+
+        Instantiate(bombPrefab, transform.position + new Vector3(grappleDirection, 0, 0), Quaternion.identity);
+    }
+
     void Climbing()
     {
         if (!isClimbing) return;
@@ -390,6 +404,12 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(0, verticalPlayerInput * climbSpeed);
 
     }
+
+    
+
+
+
+
 
     public FacingDirection GetFacingDirection()
     {
