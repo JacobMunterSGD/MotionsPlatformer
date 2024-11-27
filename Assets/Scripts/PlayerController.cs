@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum PlayerState
 {
@@ -58,6 +59,14 @@ public class PlayerController : MonoBehaviour
     Vector2 grappleCurrentEndPos;
     Vector2 grappleStartPos;
 
+    [Header("Climbing")]
+
+    public float wallCheckDistance;
+
+    bool isClimbing;
+
+    public float climbSpeed;
+
     FacingDirection lastDirectionFaced;
 
     Vector2 velocity;
@@ -92,7 +101,7 @@ public class PlayerController : MonoBehaviour
         Vector2 playerInput = new Vector2();
         playerInput.x = Input.GetAxisRaw("Horizontal");
 
-        if (!isDead) MovementUpdate(playerInput);
+        if (!isDead && !isClimbing) MovementUpdate(playerInput);
         //rb.velocity = velocity;
 
     }
@@ -104,6 +113,13 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown("c") && !isDead && !isGrappling) GrappleStart();
         GrappleUpdate();
+
+        if (Input.GetKeyDown("v") && !isDead && IsCloseToWall())
+        {
+            if (isClimbing) isClimbing = false;
+            else isClimbing = true;
+        }
+        Climbing();
 
         CoyoteTimerUpdate();
         gameTimer += Time.deltaTime;
@@ -276,7 +292,6 @@ public class PlayerController : MonoBehaviour
         if (Physics2D.Linecast(transform.position, grappleCurrentEndPos, jumpLayerMask))
         {
             Vector2 GrapplePullVelocity = grappleCurrentEndPos - new Vector2(transform.position.x, transform.position.y);
-            print(GrapplePullVelocity);
             rb.velocity += GrapplePullVelocity * grapplePullMultiplier;
             isGrappling = false;
         }
@@ -312,10 +327,12 @@ public class PlayerController : MonoBehaviour
             {
                 jumpAvailable = true;
             }
+            if (isClimbing) jumpAvailable = true;
         }
 
         if (jumpAvailable)
         {
+            isClimbing = false;
             rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
             // velocity.y = jumpVelocity;
             coyoteTimer = 0;
@@ -348,6 +365,30 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+    }
+
+    bool IsCloseToWall()
+    {
+
+        RaycastHit2D hitInfoLineCast = Physics2D.Linecast(transform.position + new Vector3(-wallCheckDistance, 0, 0), transform.position + new Vector3(wallCheckDistance, 0, 0), jumpLayerMask);
+        if (hitInfoLineCast) Debug.DrawLine(transform.position, hitInfoLineCast.point, Color.red);
+
+        return hitInfoLineCast;
+
+    }
+    
+    void Climbing()
+    {
+        if (!isClimbing) return;
+
+        if (!IsCloseToWall()) isClimbing = false;
+
+        rb.velocity = Vector2.zero;
+
+        float verticalPlayerInput = Input.GetAxisRaw("Vertical");
+
+        rb.velocity = new Vector2(0, verticalPlayerInput * climbSpeed);
+
     }
 
     public FacingDirection GetFacingDirection()
