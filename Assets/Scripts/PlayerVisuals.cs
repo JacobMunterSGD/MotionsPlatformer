@@ -6,7 +6,7 @@ public class PlayerVisuals : MonoBehaviour
     public SpriteRenderer bodyRenderer;
     public PlayerController playerController;
 
-    private readonly int walkingHash = Animator.StringToHash("IsWalking");
+    private readonly int walkingHash = Animator.StringToHash("Walking");
     private readonly int idleHash = Animator.StringToHash("Idle");
     private readonly int jumpingHash = Animator.StringToHash("Jumping");
     private readonly int deadHash = Animator.StringToHash("Dead");

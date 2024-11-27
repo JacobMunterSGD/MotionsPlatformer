@@ -1694,6 +1694,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1433354318}
+  currentState: 0
+  previousState: 0
   force: 20
   maxSpeed: 5
   accelerationTime: 0.25
@@ -1709,6 +1711,7 @@ MonoBehaviour:
   gravity: -28
   terminalFallingSpeed: -6
   coyoteTimerStartValue: 0.3
+  isDead: 0
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
@@ -1895,7 +1898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1433354313}
-  bodyRenderer: {fileID: 874392359}
+  bodyRenderer: {fileID: 1433354319}
   playerController: {fileID: 1433354314}
 --- !u!1 &2077868377
 GameObject:

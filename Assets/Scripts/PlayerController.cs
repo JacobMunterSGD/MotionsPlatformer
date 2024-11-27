@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
 
     Vector2 velocity;
 
-    private bool isDead = false;
+    public bool isDead;
 
     public enum FacingDirection
     {
@@ -70,9 +70,6 @@ public class PlayerController : MonoBehaviour
 
         rb.gravityScale = 0;
 
-        //print("acc: "+ accelerationRate);
-        //print("dec: " + decelerationRate);
-
     }
 
     void FixedUpdate()
@@ -80,46 +77,51 @@ public class PlayerController : MonoBehaviour
         Vector2 playerInput = new Vector2();
         playerInput.x = Input.GetAxisRaw("Horizontal");
 
-        MovementUpdate(playerInput);
+        if (!isDead) MovementUpdate(playerInput);
         //rb.velocity = velocity;
 
     }
     void Update()
     {
-        previousState = currentState;
+        AnimationStateMachine();
 
-        if (isDead)
-        {
-            currentState = PlayerState.dead;
-        }
-
-        switch (currentState)
-        {
-            case PlayerState.dead:
-                break;
-
-            case PlayerState.idle:
-                if (!IsGrounded()) currentState = PlayerState.jumping;
-                else if (rb.velocity.x != 0) currentState = PlayerState.walking;
-                break;
-
-            case PlayerState.walking:
-                if (!IsGrounded()) currentState = PlayerState.jumping;
-                else if (rb.velocity.x == 0) currentState = PlayerState.idle;
-                break;
-
-            case PlayerState.jumping:
-                if (IsGrounded())
-                {
-                    if (rb.velocity.x != 0) currentState = PlayerState.walking;
-                    else currentState = PlayerState.idle;
-                }
-                break;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space)) Jump();
+        if (Input.GetKeyDown(KeyCode.Space) && !isDead) Jump();
         CoyoteTimerUpdate();
         gameTimer += Time.deltaTime;
+
+        void AnimationStateMachine()
+        {
+            previousState = currentState;
+
+            if (isDead)
+            {
+                currentState = PlayerState.dead;
+            }
+
+            switch (currentState)
+            {
+                case PlayerState.dead:
+                    break;
+
+                case PlayerState.idle:
+                    if (!IsGrounded()) currentState = PlayerState.jumping;
+                    else if (rb.velocity.x != 0) currentState = PlayerState.walking;
+                    break;
+
+                case PlayerState.walking:
+                    if (!IsGrounded()) currentState = PlayerState.jumping;
+                    else if (rb.velocity.x == 0) currentState = PlayerState.idle;
+                    break;
+
+                case PlayerState.jumping:
+                    if (IsGrounded())
+                    {
+                        if (rb.velocity.x != 0) currentState = PlayerState.walking;
+                        else currentState = PlayerState.idle;
+                    }
+                    break;
+            }
+        }
 
     }
 
