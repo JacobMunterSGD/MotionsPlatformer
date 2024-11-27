@@ -45,6 +45,14 @@ public class PlayerController : MonoBehaviour
     float gameTimer;
     float lastJumped;
 
+    [Header("Grapple")]
+    float currentGrappleLength;
+    public float grappleLaunchSpeed;
+    float grappleDirection;
+    Vector2 grappleCurrentEndPos;
+    bool isGrappling;
+    Vector2 grappleStartPos;
+
     FacingDirection lastDirectionFaced;
 
     Vector2 velocity;
@@ -70,6 +78,8 @@ public class PlayerController : MonoBehaviour
 
         rb.gravityScale = 0;
 
+        isGrappling = false;
+
     }
 
     void FixedUpdate()
@@ -86,6 +96,10 @@ public class PlayerController : MonoBehaviour
         AnimationStateMachine();
 
         if (Input.GetKeyDown(KeyCode.Space) && !isDead) Jump();
+
+        if (Input.GetKeyDown("c") && !isDead && !isGrappling) GrappleStart();
+        GrappleUpdate();
+
         CoyoteTimerUpdate();
         gameTimer += Time.deltaTime;
 
@@ -234,6 +248,35 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    void GrappleStart()
+    {
+        isGrappling = true;
+        grappleCurrentEndPos = transform.position;
+        grappleStartPos = transform.position;
+        currentGrappleLength = 0;
+
+        if (lastDirectionFaced == FacingDirection.right) grappleDirection = 1;
+        if (lastDirectionFaced == FacingDirection.left) grappleDirection = -1;
+    }
+
+    void GrappleUpdate()
+    {
+        if (!isGrappling) return;
+
+        grappleCurrentEndPos = new Vector2(grappleStartPos.x + currentGrappleLength * grappleDirection, grappleStartPos.y);
+        currentGrappleLength += Time.deltaTime * grappleLaunchSpeed;
+
+        Debug.DrawLine(transform.position, grappleCurrentEndPos, Color.red);
+
+        if (Physics2D.Linecast(transform.position, grappleCurrentEndPos, jumpLayerMask))
+        {
+            Vector2 GrapplePullVelocity = grappleCurrentEndPos - new Vector2(transform.position.x, transform.position.y);
+            print(GrapplePullVelocity);
+            rb.velocity += GrapplePullVelocity;
+            isGrappling = false;
+        }
+
+    }
 
     void CoyoteTimerUpdate()
     {

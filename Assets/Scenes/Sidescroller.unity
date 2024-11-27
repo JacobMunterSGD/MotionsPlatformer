@@ -1711,6 +1711,7 @@ MonoBehaviour:
   gravity: -28
   terminalFallingSpeed: -6
   coyoteTimerStartValue: 0.3
+  grappleLaunchSpeed: 10
   isDead: 0
 --- !u!4 &1433354315
 Transform:
