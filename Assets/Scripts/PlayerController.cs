@@ -46,11 +46,16 @@ public class PlayerController : MonoBehaviour
     float lastJumped;
 
     [Header("Grapple")]
-    float currentGrappleLength;
+
     public float grappleLaunchSpeed;
+    public float grapplePullMultiplier;
+
+    float currentGrappleLength;
     float grappleDirection;
-    Vector2 grappleCurrentEndPos;
+
     bool isGrappling;
+
+    Vector2 grappleCurrentEndPos;
     Vector2 grappleStartPos;
 
     FacingDirection lastDirectionFaced;
@@ -184,7 +189,7 @@ public class PlayerController : MonoBehaviour
         {
             if (maxSpeed < Mathf.Abs(rb.velocity.x + playerInput.x * force * Time.deltaTime))
             {
-                rb.velocity = new Vector2(maxSpeed * playerInput.x, rb.velocity.y);
+                //rb.velocity = new Vector2(maxSpeed * playerInput.x, rb.velocity.y);
             }
             else
             {
@@ -272,7 +277,7 @@ public class PlayerController : MonoBehaviour
         {
             Vector2 GrapplePullVelocity = grappleCurrentEndPos - new Vector2(transform.position.x, transform.position.y);
             print(GrapplePullVelocity);
-            rb.velocity += GrapplePullVelocity;
+            rb.velocity += GrapplePullVelocity * grapplePullMultiplier;
             isGrappling = false;
         }
 
