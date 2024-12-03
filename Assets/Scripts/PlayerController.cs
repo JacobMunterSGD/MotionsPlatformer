@@ -16,11 +16,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("Horizontal")]
     [SerializeField] float force;
-    [SerializeField] float maxSpeed;
+    [SerializeField] float maxRunSpeed;
 
-    [SerializeField] float accelerationTime;
-    [SerializeField] float decelerationTime;
-
+    //not using at the moment
+    float accelerationTime;
+    float decelerationTime;
     float accelerationRate;
     float decelerationRate;
 
@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour
     {
         left, right
     }
+    
 
     void OnValidate()
     {
@@ -91,13 +92,12 @@ public class PlayerController : MonoBehaviour
 
         gameTimer = 0;
 
-        accelerationRate = maxSpeed / accelerationTime;
-        decelerationRate = maxSpeed / decelerationTime;
+        accelerationRate = maxRunSpeed / accelerationTime;
+        decelerationRate = maxRunSpeed / decelerationTime;
 
         rb.gravityScale = 0;
 
         isGrappling = false;
-
     }
 
     void FixedUpdate()
@@ -209,17 +209,17 @@ public class PlayerController : MonoBehaviour
 
         void Walking(Vector2 playerInput)
         {
-            if (maxSpeed < Mathf.Abs(rb.velocity.x + playerInput.x * force * Time.deltaTime))
+            if (maxRunSpeed < Mathf.Abs(rb.velocity.x + playerInput.x * force * Time.deltaTime))
             {
-                //rb.velocity = new Vector2(maxSpeed * playerInput.x, rb.velocity.y);
+                //rb.velocity = new Vector2(maxRunSpeed * playerInput.x, rb.velocity.y);
             }
             else
             {
                 rb.velocity = new Vector2(rb.velocity.x + playerInput.x * force * Time.deltaTime, rb.velocity.y);
             }
-            //if (maxSpeed < Mathf.Abs(velocity.x + playerInput.x * force * Time.deltaTime))
+            //if (maxRunSpeed < Mathf.Abs(velocity.x + playerInput.x * force * Time.deltaTime))
             //{
-            //    velocity.x = maxSpeed * playerInput.x;
+            //    velocity.x = maxRunSpeed * playerInput.x;
             //}
             //else
             //{
