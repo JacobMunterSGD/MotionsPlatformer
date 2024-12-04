@@ -14,15 +14,20 @@ public class Bomb : MonoBehaviour
     public float bombTimerStartValue;
     public float bombPower;
 
+    SpriteRenderer sr;
+
     void Start()
     {
         player = GameObject.Find("Player");
         playerRB = player.GetComponent<Rigidbody2D>();
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
 
         bombTimer = bombTimerStartValue;
 
         rb.velocity = playerRB.velocity;
+
+        sr.color = new Color(0, 0, 0);
 
     }
 
@@ -31,14 +36,21 @@ public class Bomb : MonoBehaviour
         if (bombTimer > 0)
         {
             bombTimer -= Time.deltaTime;
+            sr.color = new Color(sr.color.r + Time.deltaTime, 0, 0);
         }
         else
         {
-            Vector2 bombExplosionVelocityOnPlayer = (new Vector2(player.transform.position.x, player.transform.position.y) - new Vector2(transform.position.x, transform.position.y)).normalized;
+            Vector2 bombExplosionVelocityOnPlayer = (
+                new Vector2(player.transform.position.x, player.transform.position.y)
+                - new Vector2(transform.position.x, transform.position.y)).normalized;
 
-            float distanceBetweenBombandPlayer = Vector2.Distance(new Vector2(transform.position.x, transform.position.y), new Vector2(player.transform.position.x, player.transform.position.y));
+            float distanceBetweenBombandPlayer = Vector2.Distance(
+                new Vector2(transform.position.x, transform.position.y),
+                new Vector2(player.transform.position.x, player.transform.position.y));
 
-            playerRB.velocity += bombExplosionVelocityOnPlayer * (1 / distanceBetweenBombandPlayer) * bombPower;
+            playerRB.velocity += bombExplosionVelocityOnPlayer
+                * (1 / distanceBetweenBombandPlayer)
+                * bombPower;
 
             Destroy(gameObject);
         }

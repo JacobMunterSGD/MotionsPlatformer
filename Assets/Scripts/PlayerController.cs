@@ -106,29 +106,28 @@ public class PlayerController : MonoBehaviour
         playerInput.x = Input.GetAxisRaw("Horizontal");
 
         if (!isDead && !isClimbing) MovementUpdate(playerInput);
-        //rb.velocity = velocity;
+        Climbing();
+        GrappleUpdate();
+        CoyoteTimerUpdate();
 
     }
     void Update()
     {
+        // animations
         AnimationStateMachine();
 
+        // inputs
         if (Input.GetKeyDown(KeyCode.Space) && !isDead) Jump();
-
         if (Input.GetKeyDown("c") && !isDead && !isGrappling) GrappleStart();
-        GrappleUpdate();
-
         if (Input.GetKeyDown("v") && !isDead && IsCloseToWall())
         {
             if (isClimbing) isClimbing = false;
             else isClimbing = true;
         }
-        Climbing();
+        if (Input.GetKeyDown("x") && !isDead) SpawnBomb();        
 
-        if (Input.GetKeyDown("x") && !isDead) SpawnBomb();
-
-            CoyoteTimerUpdate();
         gameTimer += Time.deltaTime;
+
 
         void AnimationStateMachine()
         {
@@ -166,27 +165,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    //void MovementUpdate2(Vector2 playerInput) // incorporate this into how it works right now
-    //{
-    //    if (playerInput.x != 0)
-    //    {
-    //        velocity.x += accelerationRate * playerInput.x * Time.deltaTime;
-    //    }
-    //    else
-    //    {
-    //        if (velocity.x > 0)
-    //        {
-    //            velocity.x -= decelerationRate * Time.deltaTime;
-    //            velocity.x = Mathf.Max(velocity.x, 0);
-    //        }
-    //        else if (velocity.x < 0)
-    //        {
-    //            velocity.x += decelerationRate * Time.deltaTime;
-    //            velocity.x = Mathf.Max(velocity.x, 0);
-    //        }
-    //    }
-    //}
-
     private void MovementUpdate(Vector2 playerInput)
     {
         Walking(playerInput);
@@ -196,7 +174,6 @@ public class PlayerController : MonoBehaviour
             GroundFriction();
             PlayerGravity(0);
             if (rb.velocity.y < 0) rb.velocity = new Vector2(rb.velocity.x, 0);
-            // if (velocity.y < 0) velocity.y = 0;
         }
         else
         {
@@ -217,19 +194,11 @@ public class PlayerController : MonoBehaviour
             {
                 rb.velocity = new Vector2(rb.velocity.x + playerInput.x * force * Time.deltaTime, rb.velocity.y);
             }
-            //if (maxRunSpeed < Mathf.Abs(velocity.x + playerInput.x * force * Time.deltaTime))
-            //{
-            //    velocity.x = maxRunSpeed * playerInput.x;
-            //}
-            //else
-            //{
-            //    velocity.x = velocity.x + playerInput.x * force * Time.deltaTime;
-            //}
+
         }
         void PlayerGravity(float multiplier)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y + gravity * Time.deltaTime * multiplier);
-            // velocity.y = velocity.y + gravity * Time.deltaTime * multiplier;
         }
         void GroundFriction()
         {
@@ -241,14 +210,7 @@ public class PlayerController : MonoBehaviour
             {
                 rb.velocity = new Vector2(rb.velocity.x + groundFriction * Time.deltaTime, rb.velocity.y);
             }
-            //if (velocity.x > 0.1 && IsGrounded())
-            //{
-            //    velocity.x = velocity.x - groundFriction * Time.deltaTime;
-            //}
-            //if (velocity.x < -0.1 && IsGrounded())
-            //{
-            //    velocity.x = rb.velocity.x + groundFriction * Time.deltaTime;
-            //}
+
         }
         void TerminalFallingVelocityCheck()
         {
@@ -256,10 +218,7 @@ public class PlayerController : MonoBehaviour
             {
                 rb.velocity = new Vector2(rb.velocity.x, terminalFallingSpeed);
             }
-            //if (velocity.y + gravity * Time.deltaTime < terminalFallingSpeed)
-            //{
-            //    velocity.y = terminalFallingSpeed;
-            //}
+
         }
         void MakeXVelocity0IfSmallNumber()
         {
@@ -267,10 +226,7 @@ public class PlayerController : MonoBehaviour
             {
                 rb.velocity = new Vector2(0, rb.velocity.y);
             }
-            //if (-0.1 < velocity.x && velocity.x < 0.1) // 
-            //{
-            //    velocity = new Vector2(0, velocity.y);
-            //}
+
 
         }
     }
@@ -340,7 +296,6 @@ public class PlayerController : MonoBehaviour
         {
             isClimbing = false;
             rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-            // velocity.y = jumpVelocity;
             coyoteTimer = 0;
             lastJumped = gameTimer;
         }
@@ -349,7 +304,6 @@ public class PlayerController : MonoBehaviour
     public bool IsWalking()
     {
         return (Mathf.Abs(rb.velocity.x) > .1);
-        //return (Mathf.Abs(velocity.x) > .1);
     }
 
     public bool IsGrounded()
@@ -373,22 +327,26 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    void SpawnBomb()
+    {
+        float bombSpawnDirection = 0;
+
+        if (lastDirectionFaced == FacingDirection.right) bombSpawnDirection = 1;
+        if (lastDirectionFaced == FacingDirection.left) bombSpawnDirection = -1;
+
+        Instantiate(bombPrefab, transform.position + new Vector3(bombSpawnDirection, 0, 0), Quaternion.identity);
+    }
     bool IsCloseToWall()
     {
 
-        RaycastHit2D hitInfoLineCast = Physics2D.Linecast(transform.position + new Vector3(-wallCheckDistance, 0, 0), transform.position + new Vector3(wallCheckDistance, 0, 0), jumpLayerMask);
+        RaycastHit2D hitInfoLineCast = Physics2D.Linecast(
+            transform.position + new Vector3(-wallCheckDistance, 0, 0),
+            transform.position + new Vector3(wallCheckDistance, 0, 0),
+            jumpLayerMask);
         if (hitInfoLineCast) Debug.DrawLine(transform.position, hitInfoLineCast.point, Color.red);
 
         return hitInfoLineCast;
 
-    }
-
-    void SpawnBomb()
-    {
-        if (lastDirectionFaced == FacingDirection.right) grappleDirection = 1;
-        if (lastDirectionFaced == FacingDirection.left) grappleDirection = -1;
-
-        Instantiate(bombPrefab, transform.position + new Vector3(grappleDirection, 0, 0), Quaternion.identity);
     }
 
     void Climbing()
@@ -404,12 +362,6 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(0, verticalPlayerInput * climbSpeed);
 
     }
-
-    
-
-
-
-
 
     public FacingDirection GetFacingDirection()
     {
