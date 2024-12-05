@@ -14,21 +14,26 @@ public class PlayerController : MonoBehaviour
     public PlayerState currentState = PlayerState.idle;
     public PlayerState previousState = PlayerState.idle;
 
+
+
     [Header("Horizontal")]
     [SerializeField] float force;
     [SerializeField] float maxRunSpeed;
 
-    //not using at the moment
+    /* not using at the moment
     float accelerationTime;
     float decelerationTime;
     float accelerationRate;
     float decelerationRate;
+    */
 
     [SerializeField] float groundFriction;
 
     [Header("Ground Check")]
     [SerializeField] float groundCheckDistance;
     [SerializeField] private LayerMask jumpLayerMask;
+
+
 
     [Header("Vertical")]
     [SerializeField] float apexHeight;
@@ -39,12 +44,16 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float terminalFallingSpeed;
 
+
+
     [Header("Coyote Time")]
     float coyoteTimer;
     [SerializeField] float coyoteTimerStartValue;
 
     float gameTimer;
     float lastJumped;
+
+
 
     [Header("Grapple")]
 
@@ -59,6 +68,8 @@ public class PlayerController : MonoBehaviour
     Vector2 grappleCurrentEndPos;
     Vector2 grappleStartPos;
 
+
+
     [Header("Climbing")]
 
     [SerializeField] float wallCheckDistance;
@@ -67,13 +78,16 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float climbSpeed;
 
+
+
     [Header("Bomb")]
 
     [SerializeField] GameObject bombPrefab;
 
-    FacingDirection lastDirectionFaced;
 
-    Vector2 velocity;
+
+
+    FacingDirection lastDirectionFaced;
 
     [SerializeField] bool isDead;
 
@@ -92,8 +106,8 @@ public class PlayerController : MonoBehaviour
 
         gameTimer = 0;
 
-        accelerationRate = maxRunSpeed / accelerationTime;
-        decelerationRate = maxRunSpeed / decelerationTime;
+        /*accelerationRate = maxRunSpeed / accelerationTime;
+        decelerationRate = maxRunSpeed / decelerationTime;*/
 
         rb.gravityScale = 0;
 
@@ -125,6 +139,7 @@ public class PlayerController : MonoBehaviour
             else isClimbing = true;
         }
         if (Input.GetKeyDown("x") && !isDead) SpawnBomb();        
+
 
         gameTimer += Time.deltaTime;
 
@@ -220,17 +235,17 @@ public class PlayerController : MonoBehaviour
             }
 
         }
+        // This functions checks if the character is moving a miniscule amount horizontally, which can sometimes happen
         void MakeXVelocity0IfSmallNumber()
         {
             if (-0.1 < rb.velocity.x && rb.velocity.x < 0.1) // 
             {
                 rb.velocity = new Vector2(0, rb.velocity.y);
             }
-
-
         }
     }
     
+    // this method is called when the grapple hook is thrown
     void GrappleStart()
     {
         isGrappling = true;
@@ -242,6 +257,7 @@ public class PlayerController : MonoBehaviour
         if (lastDirectionFaced == FacingDirection.left) grappleDirection = -1;
     }
 
+    // this method updates the grapple hook every frame
     void GrappleUpdate()
     {
         if (!isGrappling) return;
@@ -259,6 +275,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
 
     void CoyoteTimerUpdate()
     {
@@ -336,6 +353,7 @@ public class PlayerController : MonoBehaviour
 
         Instantiate(bombPrefab, transform.position + new Vector3(bombSpawnDirection, 0, 0), Quaternion.identity);
     }
+
     bool IsCloseToWall()
     {
 
